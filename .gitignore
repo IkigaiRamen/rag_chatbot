@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv
+venv/
+
+# Data & indexes
+faiss_index/
+*.index
+*.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
