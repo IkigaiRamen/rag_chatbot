@@ -16,29 +16,26 @@ class Retriever:
         self.top_k = top_k
 
     def get_hybrid_query_embedding(self, query: str) -> np.ndarray:
-        """
-        Generate hybrid embedding for the query:
-        SentenceTransformer + LM Studio embeddings
-        """
-        # 1️⃣ ST embedding
+        # ST embedding
         st_emb = self.st_model.encode([query], convert_to_numpy=True).astype("float32")
 
-        # 2️⃣ LM Studio embedding via API
-        import requests
-        try:
-            resp = requests.post(self.lmstudio_url, json={"input": query})
-            resp.raise_for_status()
-            lm_emb = np.array(resp.json()["data"][0]["embedding"], dtype="float32")
-        except Exception as e:
-            print(f"LM Studio embedding failed: {e}")
-            lm_emb = np.zeros(1536, dtype="float32")  # fallback size, adjust if needed
+        # LM Studio embedding — safe wrapper
+        lm_emb = self.store.get_lmstudio_embeddings(query)
 
-        # 3️⃣ Concatenate
+        # Concatenate
         hybrid_emb = np.concatenate([st_emb, lm_emb], axis=1)
 
-        # 4️⃣ Normalize
+        # Safety padding for FAISS
+        if hybrid_emb.shape[1] != self.store.index.d:
+            print(f"[WARNING] Hybrid embedding dim {hybrid_emb.shape[1]} != FAISS index dim {self.store.index.d}, padding with zeros")
+            padded = np.zeros((1, self.store.index.d), dtype="float32")
+            padded[0, :hybrid_emb.shape[1]] = hybrid_emb
+            hybrid_emb = padded
+
+        # Normalize
         faiss.normalize_L2(hybrid_emb)
         return hybrid_emb
+
 
     def retrieve(self, query: str) -> List[Dict]:
         """

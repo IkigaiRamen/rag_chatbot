@@ -1,6 +1,6 @@
 # src/rag/rag.py
 from typing import Dict
-from src.retrieval.retriever import Retriever
+from src.retrieval.retriever_hybrid import Retriever
 from src.llm.llm import LLM
 
 class RAG:

@@ -40,8 +40,8 @@ embedding_store = HybridEmbeddingStore(
     st_model_name="all-MiniLM-L6-v2",
     lmstudio_url="http://127.0.0.1:1234",
     lmstudio_model="text-embedding-nomic-embed-text-v1.5",
-    index_path="data/index/hybrid_faiss.index",
-    metadata_path="data/index/hybrid_metadata.pkl"
+    index_path="data/index/faiss.index",
+    metadata_path="data/index/metadata.pkl"
 )
 
 # -----------------------------
