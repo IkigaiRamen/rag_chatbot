@@ -4,6 +4,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import logging
 import time
+from fastapi.middleware.cors import CORSMiddleware
 
 # -----------------------------
 # RAG components
@@ -13,12 +14,29 @@ from src.embeddings.embed_hybrid import HybridEmbeddingStore
 from src.retrieval.retriever_hybrid import Retriever
 from src.llm.llm import LLM
 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or ["http://localhost:5173"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # -----------------------------
 # Logging
 # -----------------------------
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s"
+)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # later restrict this
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # -----------------------------
