@@ -5,6 +5,8 @@ from pydantic import BaseModel
 import logging
 import time
 from fastapi.middleware.cors import CORSMiddleware
+from src.api.upload import router as upload_router
+
 
 # -----------------------------
 # RAG components
@@ -117,6 +119,8 @@ def ask_question(request: AskRequest):
     except Exception as e:
         logging.exception("RAG failure")
         raise HTTPException(status_code=500, detail=str(e))
+
+app.include_router(upload_router)
 
 
 @app.get("/health")
