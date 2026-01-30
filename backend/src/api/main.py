@@ -14,23 +14,14 @@ from src.embeddings.embed_hybrid import HybridEmbeddingStore
 from src.retrieval.retriever_hybrid import Retriever
 from src.llm.llm import LLM
 
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # or ["http://localhost:5173"]
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 # -----------------------------
-# Logging
+# FastAPI app (CREATE FIRST)
 # -----------------------------
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s"
-)
+app = FastAPI(title="Hybrid RAG Chatbot")
 
-
+# -----------------------------
+# Middleware
+# -----------------------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # later restrict this
@@ -40,16 +31,19 @@ app.add_middleware(
 )
 
 # -----------------------------
+# Logging
+# -----------------------------
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s"
+)
+
+# -----------------------------
 # Request model
 # -----------------------------
 class AskRequest(BaseModel):
     question: str
     top_k: int = 3
-
-# -----------------------------
-# FastAPI app
-# -----------------------------
-app = FastAPI(title="Hybrid RAG Chatbot")
 
 # -----------------------------
 # Initialize Hybrid Embeddings
